@@ -1,0 +1,40 @@
+The Vaibhav Gupta Show-So damn sexy these makes and models
+-------
+us.jpg
+--------
+People be like I love Vaibhav because:
+- sexy ass mofucka
+- makes and models
+- so damn goopy
+--------
+compiler = '/Users/tommychen/anaconda/python.app/Contents/MacOS/python'
+command = compiler + ' build.py'
+--------
+
+--------
+class AddCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		global prev
+		path = open(filename, 'ab')
+		selection = sublime.Region(0, self.view.size())
+		if len(self.view.sel()) == 1:
+			selection = self.view.sel()[0]
+--------
+
+--------
+class AddCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		global prev
+		path = open(filename, 'ab')
+		selection = sublime.Region(0, self.view.size())
+		if len(self.view.sel()) == 1:
+			selection = self.view.sel()[0]
+		code = self.view.substr(selection)
+		if code != prev:
+			path.write('\n--------\n')
+			path.write(code)
+			path.write('\n--------\n')
+			path.close()
+			prev = code
+		execute(command)
+--------

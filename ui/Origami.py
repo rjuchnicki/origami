@@ -1,29 +1,47 @@
-import sublime, sublime_plugin
-from commands import getstatusoutput
+import sublime
+import sublime_plugin
+import commands
+from shutil import copy
 
-command1 = '/Users/tommychen/anaconda/python.app/Contents/MacOS/python create.py'
-command2 = 'open /Users/tommychen/Desktop/bah.pptx'
+def execute(command):
+	return commands.getstatusoutput(command)
 
-def generate():
-	return getstatusoutput(command1)
+filename = 'slideshow.txt'
+prev = None
 
-def editor():
-	return getstatusoutput(command2)
-
-SLIDE = 1
-
-class OrigamiCommand(sublime_plugin.TextCommand):
-	def __init__(self, view):
-		self.view = view
-	def run(self, view):
-		global SLIDE
-		code = self.view.substr(sublime.Region(0, self.view.size()))
-		open('%d.txt' % SLIDE, 'wb').write(code)
-		a, b = generate()
-		print b
-		SLIDE += 1
-		print SLIDE
-
-class BahCommand(sublime_plugin.TextCommand):
+compiler = '/Users/tommychen/anaconda/python.app/Contents/MacOS/python'
+command = compiler + ' build.py'
+class AddCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
-		editor()
+		global prev
+		path = open(filename, 'ab')
+		selection = sublime.Region(0, self.view.size())
+		if len(self.view.sel()) == 1:
+			selection = self.view.sel()[0]
+		code = self.view.substr(selection)
+		if code != prev:
+			path.write('\n--------\n')
+			path.write(code)
+			path.write('\n--------\n')
+			path.close()
+			prev = code
+		execute(command)
+
+class CleanCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		open(filename, 'wb').close()
+
+class OpenCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		sublime.active_window().open_file(filename)
+
+class PowerpointCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		execute('/Users/tommychen/anaconda/python.app/Contents/MacOS/python build.py')
+		execute('open slideshow.pptx')
+
+class DropboxCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		copy('slideshow.pptx', '/Users/tommychen/Dropbox/slideshow.pptx')
+		self.view.insert(edit, 0, '# The link to your powerpoint is: https://www.dropbox.com/s/f4fzv3pd4vl5p55/slideshow.pptx\n\n')
+		execute('open slideshow.pptx')
