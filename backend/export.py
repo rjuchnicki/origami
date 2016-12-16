@@ -1,7 +1,7 @@
 import dropbox 
 
-app_key = '1owd69l36nqbew5'
-app_secret = 'vuqt00va8g5t4hp'
+app_key = 'abc123'
+app_secret = 'secret'
 
 flow = dropbox.client.DropboxOAuth2FlowNoRedirect(app_key, app_secret)
 
